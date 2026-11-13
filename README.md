@@ -40,6 +40,4 @@ roles (coordinador / consejero); sin claves en el código.
 python pruebas.py       # 57 comprobaciones sobre una base temporal
 ```
 
-## PDF de entrega
 
-`docs/construir_pdf.py` (requiere Playwright) arma el PDF con las capturas. El repositorio no incluye la base de datos.
