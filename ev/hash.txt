@@ -1,0 +1,11 @@
+$ python mostrar_usuarios.py
+correo:     jose@demo.co
+nombre:     Jose Ubarnes
+rol:        coordinador
+hash_clave: scrypt:32768:8:1$szv9GCalToez5ro1$09f33cb18a5724f66e3ba2a99b82a96042c28f95049b353261c3f1ffd370b4fb751c795497a1d0524da7c507a47a08fbed84b0c50931d2cf0fa8441f4193ff08
+
+correo:     valentina@demo.co
+nombre:     Valentina Sáez
+rol:        consejero
+hash_clave: scrypt:32768:8:1$GAk6vkCYft8PMdGX$7b6430e7b7b0839667da6d81d7d2ceb93130f8df4dcc50d5cbc942abe9a132de0311c388e7764400bf76d9f3dc002b69aecfbc7214b42a63d1456a055ce36b6c
+

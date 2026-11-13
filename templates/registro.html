@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta · SAT-Deserción{% endblock %}
+{% block contenido %}
+<header class="letterhead">
+<p class="mark">Universidad Cooperativa de Colombia · Optativa II · Grupo 7792</p>
+<h1>Crear cuenta</h1>
+<p class="sub">Las cuentas nuevas son de consejero. La contraseña se guarda como hash: nadie, ni nosotros, puede leerla.</p>
+</header>
+<main>
+<div class="card-index auth">
+<form method="post" action="{{ url_for('registro') }}">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<div class="field-grid">
+<div><label for="nombre">Nombre</label><input id="nombre" name="nombre" type="text" required maxlength="80" value="{{ valores.get('nombre', '') }}"></div>
+<div><label for="correo">Correo</label><input id="correo" name="correo" type="email" required maxlength="120" autocomplete="username" value="{{ valores.get('correo', '') }}"></div>
+<div><label for="clave">Contraseña (mínimo 8, con letras y números)</label><input id="clave" name="clave" type="password" required minlength="8" maxlength="128" autocomplete="new-password"></div>
+<div><label for="clave2">Repite la contraseña</label><input id="clave2" name="clave2" type="password" required minlength="8" maxlength="128" autocomplete="new-password"></div>
+</div>
+<button type="submit">Crear cuenta</button>
+{% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+<p class="alt">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a>.</p>
+</form>
+</div>
+</main>
+{% endblock %}

@@ -1,0 +1,31 @@
+$ python cargar_datos.py                      # primer cargue
+Archivo: estudiantes.csv
+  Entran:      4424
+  Se aceptan:  4424
+  Se rechazan: 0
+  Estudiantes: 4424 nuevos, 0 actualizados, 0 sin cambios
+  Rendimientos: 8848 nuevos, 0 actualizados
+  En la base ahora: 4424 estudiantes, 8848 rendimientos
+
+$ python cargar_datos.py                      # el MISMO archivo otra vez
+Archivo: estudiantes.csv
+  Entran:      4424
+  Se aceptan:  4424
+  Se rechazan: 0
+  Estudiantes: 0 nuevos, 0 actualizados, 4424 sin cambios
+  Rendimientos: 0 nuevos, 0 actualizados
+  En la base ahora: 4424 estudiantes, 8848 rendimientos
+
+$ python cargar_datos.py --archivo data/nuevo_cargue_prueba.csv   # archivo con una corrección
+Archivo: nuevo_cargue_prueba.csv
+  Entran:      9
+  Se aceptan:  4
+  Se rechazan: 5
+      - aprobadas mayor que matriculadas: 1
+      - curso sin nombre de programa: 1
+      - nota promedio fuera de 0–20: 1
+      - resultado fuera de Dropout/Enrolled/Graduate: 1
+      - dato obligatorio vacío: 1
+  Estudiantes: 2 nuevos, 1 actualizados, 1 sin cambios
+  Rendimientos: 4 nuevos, 0 actualizados
+  En la base ahora: 4426 estudiantes, 8852 rendimientos

@@ -1,0 +1,37 @@
+$ python pruebas.py
+(se muestran los bloques de seguridad y datos malos; el listado completo se obtiene con python pruebas.py)
+
+3. Inyección
+  OK   SQLi en el login no entra
+  OK   SQLi con comentario no entra
+  OK   registro con <script> en el nombre se acepta como texto
+  OK   el nombre con <script> se muestra escapado
+  OK   CSP prohíbe scripts en línea
+  OK   la página no tiene scripts ni estilos en línea
+  OK   SQLi en un campo numérico: rechazo por formato
+  OK   la tabla Estudiantes sigue existiendo
+
+4. CSRF y cabeceras
+  OK   POST sin token CSRF: 403
+  OK   POST con token falso: 403
+  OK   cabeceras de seguridad presentes
+  OK   cookie de sesión HttpOnly y SameSite
+  OK   cuerpo demasiado grande: 413
+
+5. Datos malos (paso 6)
+  OK   faltan datos: 400 (aplicación)
+  OK   formato 'abc': 400 (aplicación)
+  OK   negativo: 400 (aplicación)
+  OK   decimal en unidades: 400 (aplicación)
+  OK   NaN: 400 (aplicación)
+  OK   infinito: 400 (aplicación)
+  OK   nota fuera de rango (25): 422 (base de datos)
+  OK   aprobadas > matriculadas: 422 (base de datos)
+  OK   semestre 13: 422 (base de datos)
+  OK   estudiante inexistente: 404 (base de datos)
+  OK   ningún dato malo se guardó
+  OK   dato bueno se guarda
+  OK   repetir estudiante+semestre: 409 por UNIQUE
+
+
+57 de 57 comprobaciones pasaron

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block titulo %}SAT-Deserción · Momento 3{% endblock %}
+{% block contenido %}
+<header class="letterhead">
+<div class="topbar">
+<p class="mark">Universidad Cooperativa de Colombia · Optativa II · Grupo 7792</p>
+<form class="sesion" method="post" action="{{ url_for('logout') }}">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<span class="quien" id="quien">{{ usuario['nombre'] }}, {{ usuario['rol'] }}</span>
+<button type="submit" class="secondary chico">Cerrar sesión</button>
+</form>
+</div>
+<h1>SAT-Deserción: rendimiento, alertas y matrícula</h1>
+<p class="sub">Sistema de Alerta Temprana de Deserción Estudiantil, conectado a una base con {{ '{:,}'.format(n_est).replace(',', '.') }} estudiantes y {{ '{:,}'.format(n_ren).replace(',', '.') }} registros de rendimiento semestral.</p>
+</header>
+
+<main>
+
+<section>
+<h2><span class="n">1</span>Registrar el rendimiento semestral</h2>
+<p class="section-note">La aplicación revisa que el dato llegue completo y bien escrito. La base decide si tiene sentido: aprobadas contra matriculadas, rango de la nota, semestre repetido y estudiante existente.</p>
+<div class="card-index">
+<form id="form-rend">
+<div class="field-grid">
+<div><label for="r-est">Número de estudiante</label><input id="r-est" type="number" min="1" required inputmode="numeric"></div>
+<div><label for="r-sem">Semestre (1 a 12)</label><input id="r-sem" type="number" min="1" max="12" value="3" required inputmode="numeric"></div>
+<div><label for="r-mat">Unidades matriculadas</label><input id="r-mat" type="number" min="0" required inputmode="numeric"></div>
+<div><label for="r-apr">Unidades aprobadas</label><input id="r-apr" type="number" min="0" required inputmode="numeric"></div>
+<div><label for="r-nota">Nota promedio (0 a 20)</label><input id="r-nota" type="number" step="0.1" inputmode="decimal"></div>
+</div>
+<p class="lookup" id="r-lookup" aria-live="polite"></p>
+<details>
+<summary>Otros datos del semestre (opcionales; si quedan vacíos se guarda 0)</summary>
+<div class="field-grid">
+<div><label for="r-cre">Unidades creditadas</label><input id="r-cre" type="number" min="0" inputmode="numeric"></div>
+<div><label for="r-eva">Unidades evaluadas</label><input id="r-eva" type="number" min="0" inputmode="numeric"></div>
+<div><label for="r-sin">Unidades sin evaluación</label><input id="r-sin" type="number" min="0" inputmode="numeric"></div>
+</div>
+</details>
+<button type="submit">Guardar rendimiento</button>
+<p class="hint">Para ver rechazos: guarda 10 aprobadas con 4 matriculadas, o repite el mismo estudiante y semestre.</p>
+<div class="note" id="r-note" role="status" aria-live="polite"></div>
+</form>
+</div>
+<p class="subtitle">Últimos registros guardados</p>
+<div class="tablewrap" id="r-tabla"><p class="empty">Cargando…</p></div>
+</section>
+
+<section>
+<h2><span class="n">2</span>Alerta de riesgo</h2>
+<p class="section-note">Regla: un estudiante matriculado con menos del umbral de unidades aprobadas en su último semestre registrado. La alerta propone; una persona revisa antes de actuar.</p>
+<div class="filter-inline">
+<div class="filter">
+<label for="a-umbral">Umbral de unidades aprobadas</label>
+<select id="a-umbral">
+<option value="0.4">Menos del 40 %</option>
+<option value="0.5" selected>Menos del 50 %</option>
+<option value="0.6">Menos del 60 %</option>
+</select>
+</div>
+</div>
+<p class="resumen" id="a-resumen" aria-live="polite"></p>
+<div class="tablewrap" id="a-tabla"></div>
+</section>
+
+<section>
+<h2><span class="n">3</span>Resultado por programa</h2>
+<p class="section-note">Cuántos estudiantes de cada programa desertaron, siguen matriculados o se graduaron.</p>
+<div class="filter">
+<label for="p-filtro">Programa</label>
+<select id="p-filtro">
+<option value="">Todos los programas</option>
+{% for p in programas %}<option value="{{ p['id_curso'] }}">{{ p['nombre'] }}</option>{% endfor %}
+</select>
+</div>
+<div class="tablewrap" id="p-tabla"></div>
+</section>
+
+<section>
+<h2><span class="n">4</span>Actualizar el estado de matrícula</h2>
+<p class="section-note">Son dos pasos que deben ocurrir juntos: cambiar la matrícula y anotar quién la cambió en el historial. Si algo falla entre los dos, la transacción deshace todo. Solo el rol coordinador puede hacerlo.</p>
+<div class="card-index">
+<form id="form-mat">
+<fieldset {% if usuario['rol'] != 'coordinador' %}disabled{% endif %}>
+<div class="field-grid">
+<div><label for="m-est">Número de estudiante</label><input id="m-est" type="number" min="1" required inputmode="numeric"></div>
+<div>
+<label for="m-estado">Nuevo estado de matrícula</label>
+<select id="m-estado"><option value="1">Al día</option><option value="0">Atrasada</option></select>
+</div>
+</div>
+<p class="lookup" id="m-lookup" aria-live="polite"></p>
+<label class="check"><input type="checkbox" id="m-falla"> Simular una falla entre el paso 1 y el paso 2</label>
+<button type="submit">Actualizar matrícula</button>
+</fieldset>
+{% if usuario['rol'] != 'coordinador' %}<p class="hint">Tu cuenta es de consejero: puedes consultar, pero no cambiar matrículas.</p>{% endif %}
+<div class="note" id="m-note" role="status" aria-live="polite"></div>
+</form>
+</div>
+<p class="subtitle">Historial de cambios del estudiante</p>
+<div class="tablewrap" id="m-hist"><p class="empty">Escribe un número de estudiante para ver su historial.</p></div>
+</section>
+
+<section>
+<h2><span class="n">5</span>Probar el rechazo de la base</h2>
+<p class="section-note">Envía directo a la base un rendimiento con 10 unidades aprobadas y 4 matriculadas, sin pasar por las revisiones de la aplicación, para ver qué regla lo frena. No guarda nada.</p>
+<div class="card-index">
+<button type="button" class="secondary sin-margen" id="btn-rechazo">Probar rechazo en la base</button>
+<div class="note" id="x-note" role="status" aria-live="polite"></div>
+</div>
+</section>
+
+</main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='app.js') }}"></script>{% endblock %}

@@ -1,0 +1,10 @@
+Objetivo: predecir Dropout (32,1 % de 4.424 estudiantes)
+Regla: aprobación 2.º sem < 50 %   precisión 0.847  recall 0.616  F1 0.714
+Regresión logística (5-fold CV)    precisión 0.862  recall 0.728  F1 0.789
+Árbol prof. 4 (5-fold CV)          precisión 0.847  recall 0.694  F1 0.763
+
+Sólo matriculados con 2.º sem evaluable: regla marca 1034 de 4424
+
+Solo con las variables que la app registra (unidades por semestre, nota):
+Regresión logística (5-fold CV)    precisión 0.851  recall 0.647  F1 0.735
+Árbol prof. 4 (5-fold CV)          precisión 0.836  recall 0.616  F1 0.710

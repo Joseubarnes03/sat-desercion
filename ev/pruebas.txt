@@ -1,0 +1,77 @@
+$ python pruebas.py
+1. Acceso y roles
+  OK   sin sesión, la página principal redirige al login
+  OK   sin sesión, la API responde 401
+  OK   login correcto redirige a la app
+  OK   consejero NO puede cambiar matrícula (403)
+  OK   coordinador sí puede (200)
+  OK   falla simulada: rollback, matrícula queda igual
+  OK   historial guarda quién hizo el cambio
+
+2. Contraseñas
+  OK   la contraseña no está en texto plano
+  OK   el hash usa scrypt o pbkdf2
+  OK   misma clave, hashes distintos (sal aleatoria)
+  OK   contraseña corta rechazada
+  OK   contraseña sin números rechazada
+  OK   clave incorrecta: 401
+  OK   correo inexistente: mismo mensaje que clave incorrecta
+
+3. Inyección
+  OK   SQLi en el login no entra
+  OK   SQLi con comentario no entra
+  OK   registro con <script> en el nombre se acepta como texto
+  OK   el nombre con <script> se muestra escapado
+  OK   CSP prohíbe scripts en línea
+  OK   la página no tiene scripts ni estilos en línea
+  OK   SQLi en un campo numérico: rechazo por formato
+  OK   la tabla Estudiantes sigue existiendo
+
+4. CSRF y cabeceras
+  OK   POST sin token CSRF: 403
+  OK   POST con token falso: 403
+  OK   cabeceras de seguridad presentes
+  OK   cookie de sesión HttpOnly y SameSite
+  OK   cuerpo demasiado grande: 413
+
+5. Datos malos (paso 6)
+  OK   faltan datos: 400 (aplicación)
+  OK   formato 'abc': 400 (aplicación)
+  OK   negativo: 400 (aplicación)
+  OK   decimal en unidades: 400 (aplicación)
+  OK   NaN: 400 (aplicación)
+  OK   infinito: 400 (aplicación)
+  OK   nota fuera de rango (25): 422 (base de datos)
+  OK   aprobadas > matriculadas: 422 (base de datos)
+  OK   semestre 13: 422 (base de datos)
+  OK   estudiante inexistente: 404 (base de datos)
+  OK   ningún dato malo se guardó
+  OK   dato bueno se guarda
+  OK   repetir estudiante+semestre: 409 por UNIQUE
+
+6. Alerta (paso 5)
+  OK   2 de 6 aprobadas en matriculado: alerta en_riesgo
+  OK   el estudiante aparece en /api/alertas
+  OK   /api/alertas devuelve conteos coherentes
+  OK   umbral inválido (0): 400
+  OK   umbral inválido (texto): 400
+  OK   límite inválido: 400
+  OK   umbral más alto no reduce las alertas
+  OK   alerta usa el ÚLTIMO semestre (el 12 sigue mandando)
+  OK   estudiante que ya desertó: no aplica
+
+7. Cargue repetible (paso 3)
+  OK   primer cargue inserta estudiantes
+  OK   segundo cargue idéntico: 0 nuevos, 0 actualizados
+  OK   el total no cambió
+  OK   archivo con una corrección: actualiza sin duplicar
+
+8. Operaciones previas
+  OK   prueba de rechazo: la base frena el CHECK
+  OK   resultado por programa trae nombre y porcentajes
+  OK   filtro por programa devuelve 1 fila
+
+9. Bloqueo por intentos
+  OK   tras demasiados fallos, aun con la clave buena: 429
+
+57 de 57 comprobaciones pasaron
